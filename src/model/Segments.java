@@ -11,8 +11,13 @@ package model;
 
 public class Segments {
     private String segmentID;
-    private float speedLimit;
+    public float speedLimit;
 
+    
+    public Segments() {
+        this.speedLimit = 80.0f; // Default speed limit
+    }
+        
     public float getSpeed() {
         return speedLimit;
     }
@@ -21,6 +26,18 @@ public class Segments {
         return speedLimit;
     }
 
-    public void reportStatus() {}
+    public void setSegmentID(String segmentID) {
+        this.segmentID = segmentID;
+    }
+
+    public void setSpeedLimit(float speedLimit) {
+        this.speedLimit = speedLimit;
+    }
+    
+    
+
+    public void reportStatus() {
+        System.out.println("Segment " + segmentID + " status: " + speedLimit + " km/h");
+    }
 }
 

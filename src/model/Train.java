@@ -19,8 +19,15 @@ public abstract class Train {
         return speed;
     }
 
-    public void applyBrakes() {}
+    public void applyBrakes() {
+        brakeStatus = true;
+        System.out.println("Brakes applied");
+    }    
+    public void warningSignal() {
+        warningIssued = true;
+        System.out.println("Warning signal activated");
+    }
     
-    public void warningSignal() {}
+    
 }
 

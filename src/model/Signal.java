@@ -13,11 +13,17 @@ import model.enums.SignalState;
 public class Signal {
     private String signalID;
     private SignalState status;
-
-    public void setStatus(String newStatus) {
-        // Example: status = SignalState.valueOf(newStatus.toUpperCase());
+    
+    public SignalState getStatus() {
+        return status;
     }
 
-    public void notifyTrains() {}
+    public void setStatus(String newStatus) {
+        this.status = SignalState.valueOf(newStatus);
+    }
+
+    public void notifyTrains() {
+        System.out.println("Notifying trains of signal change: " + status);
+    }
 }
 
