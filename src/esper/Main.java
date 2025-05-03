@@ -23,15 +23,27 @@ public class Main {
             // Create a new frame
             JFrame frame = new JFrame("TPWS Dashboard");
             
+            // Create dashboard instance
+            TPWSDashboard dashboard = new TPWSDashboard();
+            
             // Set the content to your JPanel
-            frame.setContentPane(new TPWSDashboard());
+            frame.setContentPane(dashboard);
 
             // Set frame settings
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(799, 660);
             frame.setLocationRelativeTo(null); // center on screen
+            
+            // Add window listener to handle cleanup when closing
+            frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                    // Call cleanup method before closing
+                    dashboard.cleanup();
+                }
+            });
+            
             frame.setVisible(true);
         });
     }
-
 }

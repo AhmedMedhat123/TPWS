@@ -7,6 +7,7 @@ package view;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import javax.swing.Timer;
 
 import model.*;
 import model.enums.BrakeType;
@@ -22,6 +23,8 @@ public class TPWSDashboard extends javax.swing.JPanel {
     private Train train;
     private Signal signal;
     private Segments segment;
+    private javax.swing.Timer speedLogTimer;
+    private javax.swing.Timer brakeStatusTimer;
     
     /**
      * Creates new form TPWSDashboard
@@ -73,6 +76,26 @@ public class TPWSDashboard extends javax.swing.JPanel {
         updateBrakeStatus(false);
         updateWarningStatus(false);
         
+         speedLogTimer = new Timer(250, e -> {
+            float currentSpeed = train.getCurrentSpeed();
+            logEvent("Current speed: " + currentSpeed + " km/h");
+        });
+         
+        brakeStatusTimer = new Timer(100, e -> {
+            String status;
+            if (controller.activeEmergency) {
+                status = "EMERGENCY BRAKE ENGAGED";
+            } else if (train.getCurrentSpeed() > segment.getSpeed() + 5) {
+                status = "NORMAL BRAKE ACTIVE";
+            } else {
+                status = "BRAKES DISENGAGED";
+            }
+            logEvent("Brake status: " + status);
+        });
+        
+        speedLogTimer.start();
+        brakeStatusTimer.start();
+        
         System.setOut(new PrintStream(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
@@ -80,9 +103,20 @@ public class TPWSDashboard extends javax.swing.JPanel {
                 jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
             }
         }));
-    }    
+    }
+
+    public void cleanup() {
+        if (speedLogTimer != null) {
+            speedLogTimer.stop();
+        }
+        if (brakeStatusTimer != null) {
+            brakeStatusTimer.stop();
+        }
+        
+        logEvent("System shutdown - Timers stopped");
+    }
     
-  private void updateSpeedDisplay(float speed) {
+    private void updateSpeedDisplay(float speed) {
         jLabel11.setText(String.format("%.1f", speed));
         if (speed > segment.getSpeed() + 10) {
             jLabel11.setForeground(java.awt.Color.RED);
@@ -129,9 +163,10 @@ public class TPWSDashboard extends javax.swing.JPanel {
 
     
     private void logEvent(String message) {
-    jTextArea1.append("TPWS LOG: " + message + "\n");
-    jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
-}
+        String timestamp = new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date());
+        jTextArea1.append("[" + timestamp + "] " + message + "\n");
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+    }
 
     
     /**

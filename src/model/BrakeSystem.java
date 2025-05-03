@@ -11,7 +11,6 @@ import model.enums.BrakeType;
  * @author ahmed
  */
 public class BrakeSystem {
-    private String brakeID;
     private boolean active;
     private BrakeType strategy;
 
@@ -19,7 +18,6 @@ public class BrakeSystem {
         this.strategy = strategy;
     }
 
-    public void applyBrake() {}
     
     public void activate() {
         active = true;
