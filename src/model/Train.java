@@ -11,7 +11,6 @@ package model;
 public abstract class Train {
     protected String trainID;
     protected float speed;
-//    protected TrackSegment location;
     protected boolean brakeStatus;
     protected boolean warningIssued;
 

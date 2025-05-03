@@ -86,6 +86,10 @@ public class TWPSController {
         activeEmergency = true;
         System.out.println("EMERGENCY BRAKE APPLIED!");
         setTrainSpeed(0);
+        
+        if (train != null) {
+            train.clearWarningSignal();
+        }
     }
     
     public void applyBrake() {
@@ -94,9 +98,20 @@ public class TWPSController {
     }
     
     
-        public void checkRedSignal() {
-        if (activeEmergency) {
-            applyEmergencyBrake();
+    public void checkRedSignal() {
+        long startTime = System.currentTimeMillis();
+        applyEmergencyBrake();
+        long duration = System.currentTimeMillis() - startTime;
+
+        if (duration > 100) {
+            System.out.println("WARNING: Emergency brake not applied within 100 ms!");
+        } else {
+            System.out.println("Emergency brake applied within " + duration + " ms");
+        }
+
+        // Clear any warnings when emergency brake is applied
+        if (train != null) {
+            train.clearWarningSignal();
         }
     }
 }

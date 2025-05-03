@@ -108,18 +108,22 @@ public class TPWSDashboard extends javax.swing.JPanel {
         if (controller.activeEmergency) {
             jLabel10.setText("EMERGENCY");
             jLabel10.setForeground(java.awt.Color.RED);
+            
+            updateSpeedDisplay(0);
+            updateWarningStatus(false);
+            
         } else if (train.getCurrentSpeed() > segment.getSpeed() + 5) {
-            jLabel10.setText("NORMAL");
+            jLabel10.setText("Normal");
             jLabel10.setForeground(java.awt.Color.ORANGE);
         } else {
-            jLabel10.setText("DISENGAGED");
+            jLabel10.setText("Inactive");
             jLabel10.setForeground(java.awt.Color.BLACK);
         }
     }
 }
     
     private void updateWarningStatus(boolean warning) {
-        jLabel9.setText(warning ? "WARNING" : "NORMAL");
+        jLabel9.setText(warning ? "WARNING" : "Normal");
         jLabel9.setForeground(warning ? java.awt.Color.ORANGE : java.awt.Color.BLACK);
     }
 
@@ -414,6 +418,9 @@ public class TPWSDashboard extends javax.swing.JPanel {
         controller.receiveSegmentInfo(segment.getSpeed(), "RED");
         updateSignalStatus("RED");
         logEvent("Signal changed to RED");
+        
+        updateBrakeStatus(true);
+        updateWarningStatus(false);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
