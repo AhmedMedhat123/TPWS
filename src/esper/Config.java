@@ -12,7 +12,6 @@ package esper;
  * @author Ahmed medhat
  */
 public class Config {
-
-    
-
+     public static final String VALID_USERNAME = "admin";
+     public static final String VALID_PASSWORD = "123";
 }
