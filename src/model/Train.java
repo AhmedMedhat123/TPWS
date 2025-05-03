@@ -27,7 +27,6 @@ public abstract class Train {
         warningIssued = true;
         System.out.println("Warning signal activated");
     }
-    
-    
+
 }
 

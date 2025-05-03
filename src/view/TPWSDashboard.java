@@ -4,6 +4,10 @@
  */
 package view;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import model.*;
 import model.enums.BrakeType;
 import model.enums.SignalState;
@@ -18,6 +22,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
     private Train train;
     private Signal signal;
     private Segments segment;
+
     
     /**
      * Creates new form TPWSDashboard
@@ -61,9 +66,17 @@ public class TPWSDashboard extends javax.swing.JPanel {
         updateSignalStatus("GREEN");
         updateBrakeStatus(false);
         updateWarningStatus(false);
+        
+        System.setOut(new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                jTextArea1.append(String.valueOf((char) b));
+                jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+            }
+        }));
     }    
     
-    private void updateSpeedDisplay(float speed) {
+  private void updateSpeedDisplay(float speed) {
         jLabel11.setText(String.format("%.1f", speed));
         if (speed > segment.getSpeed() + 10) {
             jLabel11.setForeground(java.awt.Color.RED);
@@ -85,9 +98,19 @@ public class TPWSDashboard extends javax.swing.JPanel {
     }
     
     private void updateBrakeStatus(boolean engaged) {
-        jLabel10.setText(engaged ? "ENGAGED" : "DISENGAGED");
-        jLabel10.setForeground(engaged ? java.awt.Color.RED : java.awt.Color.BLACK);
+    if (controller != null) {
+        if (controller.activeEmergency) {
+            jLabel10.setText("EMERGENCY");
+            jLabel10.setForeground(java.awt.Color.RED);
+        } else if (train.getCurrentSpeed() > segment.getSpeed() + 5) {
+            jLabel10.setText("NORMAL");
+            jLabel10.setForeground(java.awt.Color.ORANGE);
+        } else {
+            jLabel10.setText("DISENGAGED");
+            jLabel10.setForeground(java.awt.Color.BLACK);
+        }
     }
+}
     
     private void updateWarningStatus(boolean warning) {
         jLabel9.setText(warning ? "WARNING" : "NORMAL");
@@ -267,7 +290,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE)
+            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
             .addComponent(jSeparator1)
             .addComponent(jSeparator3)
             .addGroup(layout.createSequentialGroup()
@@ -363,6 +386,9 @@ public class TPWSDashboard extends javax.swing.JPanel {
         controller.receiveSpeedData(newSpeed);
         updateSpeedDisplay(newSpeed);
         logEvent("Speed increased to " + newSpeed + " km/h");
+        
+        controller.monitorSpeed();
+        updateSpeedDisplay(controller.getTrainSpeed());
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

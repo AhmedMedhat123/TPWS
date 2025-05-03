@@ -12,9 +12,9 @@ public class TWPSController {
     private String twpsControllerID;
     private String status;
     private float segmentSpeed;
-    private boolean activeEmergency;
+    public boolean activeEmergency;
     private float trainSpeed;
-    
+
     public float getTrainSpeed() {
         return trainSpeed;
     }
@@ -41,10 +41,10 @@ public class TWPSController {
 
    public void monitorSpeed() {
     if (trainSpeed > segmentSpeed + 5) {
-        sendWarningToDriver();
+        sendWarningToDriver(); 
     }
     if (trainSpeed > segmentSpeed + 10) {
-        applyEmergencyBrake();
+        applyBrake();
     }
     statusDisplay();
 }
@@ -66,10 +66,12 @@ public class TWPSController {
     public void applyEmergencyBrake() {
         activeEmergency = true;
         System.out.println("EMERGENCY BRAKE APPLIED!");
+        setTrainSpeed(0);
     }
     
     public void applyBrake() {
         System.out.println("Normal brake applied");
+        setTrainSpeed(segmentSpeed);
     }
     
     
