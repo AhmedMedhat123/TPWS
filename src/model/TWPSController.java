@@ -14,7 +14,7 @@ public class TWPSController {
     private float segmentSpeed;
     public boolean activeEmergency;
     private float trainSpeed;
-
+    
     public float getTrainSpeed() {
         return trainSpeed;
     }
@@ -25,6 +25,7 @@ public class TWPSController {
     
     public void statusDisplay() {
         this.status = "Train: " + trainSpeed + " km/h | Limit: " + segmentSpeed + " km/h";
+//        System.out.println(status);
     }
     
     public void receiveSegmentInfo(float speed, String signal) {
@@ -39,15 +40,20 @@ public class TWPSController {
         monitorSpeed();
     }
 
-   public void monitorSpeed() {
-    if (trainSpeed > segmentSpeed + 5) {
-        sendWarningToDriver(); 
+    public void monitorSpeed() {
+        if (trainSpeed > segmentSpeed + 5) {
+            sendWarningToDriver(); 
+        }
+        if (trainSpeed > segmentSpeed + 10) {
+            long startTime = System.currentTimeMillis();
+            applyBrake();
+            long duration = System.currentTimeMillis() - startTime;
+            if (duration > 100) {
+                System.out.println("WARNING: Brake not applied within 100 ms!");
+            }
+        }
+        statusDisplay();
     }
-    if (trainSpeed > segmentSpeed + 10) {
-        applyBrake();
-    }
-    statusDisplay();
-}
 
     public void compareSpeedLimit() {
         float difference = trainSpeed - segmentSpeed;

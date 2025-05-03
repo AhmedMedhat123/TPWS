@@ -4,10 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/ahmed/OneDrive/Desktop/RTS_Lab_8/src/model/Signal.java</file>
+            <file>file:/C:/Users/ahmed/OneDrive/Desktop/RTS_Lab_8/src/model/BrakeSystem.java</file>
             <file>file:/C:/Users/ahmed/OneDrive/Desktop/RTS_Lab_8/src/model/Train.java</file>
             <file>file:/C:/Users/ahmed/OneDrive/Desktop/RTS_Lab_8/src/view/TPWSDashboard.java</file>
             <file>file:/C:/Users/ahmed/OneDrive/Desktop/RTS_Lab_8/src/esper/Main.java</file>
             <file>file:/C:/Users/ahmed/OneDrive/Desktop/RTS_Lab_8/src/model/TWPSController.java</file>
+            <file>file:/C:/Users/ahmed/OneDrive/Desktop/RTS_Lab_8/src/model/Transmitter.java</file>
+            <file>file:/C:/Users/ahmed/OneDrive/Desktop/RTS_Lab_8/src/model/Segments.java</file>
         </group>
     </open-files>
 </project-private>

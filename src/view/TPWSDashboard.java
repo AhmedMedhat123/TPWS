@@ -381,7 +381,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Speed Increase
-        float newSpeed = Math.min(180, train.getCurrentSpeed() + 5);
+        float newSpeed = Math.min(180, train.getCurrentSpeed() + 4);
         controller.setTrainSpeed(newSpeed);
         controller.receiveSpeedData(newSpeed);
         updateSpeedDisplay(newSpeed);
