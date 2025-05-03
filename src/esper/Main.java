@@ -31,7 +31,7 @@ public class Main {
 
             // Set frame settings
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(799, 660);
+            frame.setSize(816, 883);
             frame.setLocationRelativeTo(null); // center on screen
             
             // Add window listener to handle cleanup when closing

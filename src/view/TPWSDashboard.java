@@ -4,10 +4,17 @@
  */
 package view;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import javax.swing.Timer;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 import model.*;
 import model.enums.BrakeType;
@@ -25,6 +32,8 @@ public class TPWSDashboard extends javax.swing.JPanel {
     private Segments segment;
     private javax.swing.Timer speedLogTimer;
     private javax.swing.Timer brakeStatusTimer;
+    private javax.swing.Timer signalStatusTimer;
+
     
     /**
      * Creates new form TPWSDashboard
@@ -78,21 +87,34 @@ public class TPWSDashboard extends javax.swing.JPanel {
         
          speedLogTimer = new Timer(250, e -> {
             float currentSpeed = train.getCurrentSpeed();
-            logEvent("Current speed: " + currentSpeed + " km/h");
-        });
+            String timestamp = new java.text.SimpleDateFormat("mm:ss.SSS").format(new java.util.Date());
+            jTextArea1.append("[" + timestamp + "] Current speed: " + String.format("%.1f km/h", currentSpeed) + "\n");
+            jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength()); 
+         });
          
         brakeStatusTimer = new Timer(100, e -> {
             String status;
             if (controller.activeEmergency) {
                 status = "EMERGENCY BRAKE ENGAGED";
-            } else if (train.getCurrentSpeed() > segment.getSpeed() + 5) {
+            } else if (train.getCurrentSpeed() > segment.getSpeed() + 10) {
                 status = "NORMAL BRAKE ACTIVE";
             } else {
-                status = "BRAKES DISENGAGED";
+                status = "BRAKES InActive";
             }
-            logEvent("Brake status: " + status);
+            String timestamp = new java.text.SimpleDateFormat("mm:ss.SSS").format(new java.util.Date());
+            jTextArea4.append("[" + timestamp + "] " + status + "\n");
+            jTextArea4.setCaretPosition(jTextArea4.getDocument().getLength());
         });
         
+        signalStatusTimer = new Timer(50, e -> {
+            String status = signal.getStatus().toString();
+            String timestamp = new java.text.SimpleDateFormat("mm:ss.SSS").format(new java.util.Date());         
+            jTextArea3.append("[" + timestamp + "] Signal: " + status + "\n");
+            jTextArea3.setCaretPosition(jTextArea3.getDocument().getLength());
+        });
+        
+        
+        signalStatusTimer.start();
         speedLogTimer.start();
         brakeStatusTimer.start();
         
@@ -113,7 +135,10 @@ public class TPWSDashboard extends javax.swing.JPanel {
             brakeStatusTimer.stop();
         }
         
-        logEvent("System shutdown - Timers stopped");
+        jTextArea1.setText("System shutdown - Speed monitor stopped\n");
+        jTextArea4.setText("System shutdown - Brake monitor stopped\n");
+        jTextArea3.setText("System shutdown - Signal monitor stopped\n");
+        
     }
     
     private void updateSpeedDisplay(float speed) {
@@ -161,13 +186,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
         jLabel9.setForeground(warning ? java.awt.Color.ORANGE : java.awt.Color.BLACK);
     }
 
-    
-    private void logEvent(String message) {
-        String timestamp = new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date());
-        jTextArea1.append("[" + timestamp + "] " + message + "\n");
-        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
-    }
-
+   
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -204,6 +223,12 @@ public class TPWSDashboard extends javax.swing.JPanel {
         jSeparator3 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea2 = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextArea3 = new javax.swing.JTextArea();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextArea4 = new javax.swing.JTextArea();
 
         jLabel1.setText("jLabel1");
 
@@ -333,20 +358,54 @@ public class TPWSDashboard extends javax.swing.JPanel {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
+        jTextArea2.setEditable(false);
+        jTextArea2.setColumns(20);
+        jTextArea2.setRows(5);
+        jScrollPane2.setViewportView(jTextArea2);
+
+        jTextArea3.setEditable(false);
+        jTextArea3.setColumns(20);
+        jTextArea3.setLineWrap(true);
+        jTextArea3.setRows(5);
+        jTextArea3.setWrapStyleWord(true);
+        jScrollPane3.setViewportView(jTextArea3);
+
+        jTextArea4.setEditable(false);
+        jTextArea4.setColumns(20);
+        jTextArea4.setRows(5);
+        jScrollPane4.setViewportView(jTextArea4);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
-            .addComponent(jSeparator1)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(499, 499, 499)
+                .addComponent(jSeparator2))
             .addComponent(jSeparator3)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 25, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4))
+                .addGap(165, 165, 165))
+            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(66, 66, 66)
-                        .addComponent(jLabel2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(170, 170, 170)
+                        .addGap(268, 268, 268)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
                             .addComponent(jLabel5)
@@ -358,32 +417,27 @@ public class TPWSDashboard extends javax.swing.JPanel {
                             .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(169, 169, 169)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel14)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(135, 135, 135)
+                        .addComponent(jLabel2))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(159, 159, 159)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton4))))
+                        .addGap(358, 358, 358)
+                        .addComponent(jLabel14))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(134, 134, 134)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43)
+                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -406,15 +460,24 @@ public class TPWSDashboard extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(29, 29, 29)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel14)
                 .addGap(1, 1, 1)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48)
+                .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -422,7 +485,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton4)
                     .addComponent(jButton3))
-                .addGap(73, 73, 73))
+                .addGap(66, 66, 66))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -432,8 +495,8 @@ public class TPWSDashboard extends javax.swing.JPanel {
         controller.setTrainSpeed(newSpeed);
         controller.receiveSpeedData(newSpeed);
         updateSpeedDisplay(newSpeed);
-        logEvent("Speed increased to " + newSpeed + " km/h");
-        
+        jTextArea2.append("[" + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + "] " + 
+            "Speed increased to " + newSpeed + " km/h\n");        
         controller.monitorSpeed();
         updateSpeedDisplay(controller.getTrainSpeed());
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -444,7 +507,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
         controller.setTrainSpeed(newSpeed);
         controller.receiveSpeedData(newSpeed);
         updateSpeedDisplay(newSpeed);
-        logEvent("Speed decreased to " + newSpeed + " km/h");
+        jTextArea2.append("[" + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + "] " + "Speed decreased to " + newSpeed + " km/h \n");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -452,7 +515,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
         signal.setStatus("RED");
         controller.receiveSegmentInfo(segment.getSpeed(), "RED");
         updateSignalStatus("RED");
-        logEvent("Signal changed to RED");
+        jTextArea2.append("[" + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + "] " + "Signal changed to RED \n");
         
         updateBrakeStatus(true);
         updateWarningStatus(false);
@@ -464,7 +527,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
         segment.speedLimit = newLimit;
         controller.receiveSegmentInfo(newLimit, signal.getStatus().toString());
         updateSpeedLimitDisplay(newLimit);
-        logEvent("Entered new segment with speed limit: " + newLimit + " km/h");
+        jTextArea2.append("[" + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + "] " + "Entered new segment with speed limit: " + newLimit + " km/h \n");
         
         controller.monitorSpeed();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -493,9 +556,15 @@ public class TPWSDashboard extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea jTextArea3;
+    private javax.swing.JTextArea jTextArea4;
     // End of variables declaration//GEN-END:variables
 }
