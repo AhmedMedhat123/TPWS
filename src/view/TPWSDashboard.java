@@ -22,7 +22,6 @@ public class TPWSDashboard extends javax.swing.JPanel {
     private Train train;
     private Signal signal;
     private Segments segment;
-
     
     /**
      * Creates new form TPWSDashboard
@@ -51,7 +50,14 @@ public class TPWSDashboard extends javax.swing.JPanel {
             public void warningSignal() {
                 updateWarningStatus(true);
             }
+            
+             @Override
+            public void clearWarningSignal() {
+                updateWarningStatus(false);
+            }   
         };
+        
+        controller.setTrain(train);
         
         signal = new Signal();
         segment = new Segments();
@@ -114,8 +120,9 @@ public class TPWSDashboard extends javax.swing.JPanel {
     
     private void updateWarningStatus(boolean warning) {
         jLabel9.setText(warning ? "WARNING" : "NORMAL");
-        jLabel9.setForeground(warning ? java.awt.Color.RED : java.awt.Color.BLACK);
+        jLabel9.setForeground(warning ? java.awt.Color.ORANGE : java.awt.Color.BLACK);
     }
+
     
     private void logEvent(String message) {
     jTextArea1.append("TPWS LOG: " + message + "\n");
@@ -220,6 +227,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
         jLabel9.setText("Normal");
         jLabel9.setToolTipText("");
         jLabel9.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLabel9.setPreferredSize(new java.awt.Dimension(64, 29));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -311,8 +319,8 @@ public class TPWSDashboard extends javax.swing.JPanel {
                             .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(169, 169, 169)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -358,7 +366,7 @@ public class TPWSDashboard extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel8)
-                    .addComponent(jLabel9))
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)

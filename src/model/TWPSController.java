@@ -14,6 +14,11 @@ public class TWPSController {
     private float segmentSpeed;
     public boolean activeEmergency;
     private float trainSpeed;
+    private Train train;
+    
+    public void setTrain(Train train) {
+    this.train = train;
+}
     
     public float getTrainSpeed() {
         return trainSpeed;
@@ -43,6 +48,11 @@ public class TWPSController {
     public void monitorSpeed() {
         if (trainSpeed > segmentSpeed + 5) {
             sendWarningToDriver(); 
+        } else {
+            // Clear warning if speed is back to normal
+            if (train != null) {
+            train.clearWarningSignal(); 
+            }
         }
         if (trainSpeed > segmentSpeed + 10) {
             long startTime = System.currentTimeMillis();
@@ -65,6 +75,9 @@ public class TWPSController {
     public void sendWarningToDriver() {
     if (trainSpeed > segmentSpeed + 5 && trainSpeed <= segmentSpeed + 10) {
             System.out.println("WARNING: Speed " + trainSpeed + " exceeds limit " + segmentSpeed + " by more than 5 km/h");
+            if (train != null) {
+                train.warningSignal();
+            }
         }
     }
 
